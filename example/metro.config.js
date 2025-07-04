@@ -1,6 +1,9 @@
 const path = require('path');
 const { getDefaultConfig } = require('@expo/metro-config');
 const { withMetroConfig } = require('react-native-monorepo-config');
+const {
+  wrapWithReanimatedMetroConfig,
+} = require('react-native-reanimated/metro-config');
 
 const root = path.resolve(__dirname, '..');
 
@@ -16,5 +19,11 @@ const config = withMetroConfig(getDefaultConfig(__dirname), {
 });
 
 config.resolver.unstable_enablePackageExports = true;
+config.transformer.getTransformOptions = async () => ({
+  transform: {
+    // WASM 모듈의 안정적 로딩하는 용도
+    inlineRequires: true,
+  },
+});
 
-module.exports = config;
+module.exports = wrapWithReanimatedMetroConfig(config);
