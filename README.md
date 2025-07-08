@@ -2,6 +2,18 @@
 
 I have a dream. My users create their own infographics.
 
+# Dependency
+
+This library requires the following peer dependencies to be installed in your project:
+
+- `react-native` (>=0.79)
+- `react` (>=18)
+- `@shopify/react-native-skia`
+- `react-native-reanimated`
+- `react-native-gesture-handler`
+
+You must install these in your app for this library to work properly.
+
 # features
 
 [ ]: Create an infographic

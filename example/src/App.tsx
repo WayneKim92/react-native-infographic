@@ -1,18 +1,10 @@
-import { View, StyleSheet } from 'react-native';
 import { RNIGView } from 'react-native-infographic';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView>
       <RNIGView />
-    </View>
+    </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
