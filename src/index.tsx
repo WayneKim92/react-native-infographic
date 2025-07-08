@@ -1,50 +1,41 @@
-export { default as HelloWorld } from './helloWorld';
+import { useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { ResultView } from './ResultView';
 
-import { Canvas, Circle } from '@shopify/react-native-skia';
-import { useWindowDimensions } from 'react-native';
-import HelloWorld from './helloWorld';
+interface RNIGViewProps {
+  // rnigURI: string;
+}
 
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { useSharedValue, withDecay } from 'react-native-reanimated';
-import { SkiaImageView } from './SkiaImageView';
-
-export function RNIGView() {
-  const screenDimensions = useWindowDimensions();
-
-  const { width } = useWindowDimensions();
-
-  const leftBoundary = 0;
-  const rightBoundary = width;
-  const translateX = useSharedValue(width / 2);
-
-  const gesture = Gesture.Pan()
-    .onChange((e) => {
-      translateX.value += e.changeX;
-    })
-    .onEnd((e) => {
-      translateX.value = withDecay({
-        velocity: e.velocityX,
-        clamp: [leftBoundary, rightBoundary],
-      });
-    });
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function RNIGView(props: RNIGViewProps) {
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   return (
-    // You must use GestureDetector as a parent of the Canvas. It cannot be used inside the Canvas.
-    <GestureDetector gesture={gesture}>
-      {/* You should not render a skia component that contains a Canvas inside a Canvas. */}
-      <Canvas
-        style={{
-          width: screenDimensions.width,
-          height: screenDimensions.height,
-        }}
-      >
-        {/* Sample Code */}
-        <HelloWorld />
-        {/* Practice Code */}
-        <SkiaImageView src="https://picsum.photos/200/300" />
-        {/* Gesture Test Code */}
-        <Circle cx={translateX} cy={40} r={20} color="#3E3E" />
-      </Canvas>
-    </GestureDetector>
+    <View>
+      {/* TODO: refactor temp style */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => setIsPreviewMode(!isPreviewMode)}>
+          <Text>{`Toggle ${isPreviewMode ? 'Edit' : 'Preview'} Mode`}</Text>
+        </TouchableOpacity>
+      </View>
+      {isPreviewMode ? (
+        <ResultView canvasData={{ canvas: {}, elements: [] }} />
+      ) : (
+        <Animated.View style={{ backgroundColor: 'red' }}>
+          {/* TODO: Reanimred 기반으로 제스처 및 스타일 수정이 가능한 컴포넌트 만들어보자. */}
+        </Animated.View>
+      )}
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    marginTop: 50,
+    height: 50,
+    backgroundColor: 'gray',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
