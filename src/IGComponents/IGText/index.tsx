@@ -1,3 +1,4 @@
+import { type TextProps as SkiaTextProps } from '@shopify/react-native-skia';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import {
   Keyboard,
@@ -14,16 +15,7 @@ import Animated, {
 
 export interface CanvasTextElementData {
   type: 'text';
-  props: {
-    x: number;
-    y: number;
-    text: string;
-    color?: string;
-    fontSize?: number;
-    fontStyle?: string;
-    fontWeight?: string;
-    // Add more Skia TextProps as needed
-  };
+  props: SkiaTextProps;
 }
 
 export interface IGTextRef {
@@ -34,25 +26,11 @@ interface IGTextProps {
   initialText?: string;
   initialX?: number;
   initialY?: number;
-  color?: string;
-  fontSize?: number;
-  fontStyle?: string;
-  fontWeight?: string;
+  // TODO: Skia Text의 모든 props를 지원하도록 확장
 }
 
 export const IGText = forwardRef<IGTextRef, IGTextProps>(
-  (
-    {
-      initialText = '',
-      initialX = 100,
-      initialY = 100,
-      color = '#222',
-      fontSize = 24,
-      fontStyle,
-      fontWeight,
-    },
-    ref
-  ) => {
+  ({ initialText = '', initialX = 100, initialY = 100 }, ref) => {
     const [text, setText] = useState(initialText);
     const [editing, setEditing] = useState(false);
 
@@ -60,7 +38,6 @@ export const IGText = forwardRef<IGTextRef, IGTextProps>(
     const x = useSharedValue(initialX);
     const y = useSharedValue(initialY);
 
-    // 마지막 위치 저장용
     const lastOffset = useSharedValue({ x: initialX, y: initialY });
 
     // Expose getCanvasElementData via ref
@@ -68,13 +45,11 @@ export const IGText = forwardRef<IGTextRef, IGTextProps>(
       getCanvasElementData: () => ({
         type: 'text',
         props: {
+          text,
           x: x.value,
           y: y.value,
-          text,
-          color,
-          fontSize,
-          fontStyle,
-          fontWeight,
+          // TODO: Skia Text의 모든 props를 지원하도록 확장
+          font: null,
         },
       }),
     }));
@@ -127,10 +102,6 @@ export const IGText = forwardRef<IGTextRef, IGTextProps>(
         <Animated.View style={[styles.container, animatedStyle]}>
           {editing ? (
             <TextInput
-              // style={[
-              //   styles.textInput,
-              //   { color, fontSize, fontStyle, fontWeight },
-              // ]}
               value={text}
               autoFocus
               onChangeText={setText}
