@@ -26,9 +26,10 @@ interface CanvasImage {
 type CanvasElement = Array<CanvasText | CanvasImage>;
 
 interface ResultViewProps {
-  canvasData: {
-    canvas: CanvasProps;
-    elements: CanvasElement;
+  // TODO: canvasData should contain the data needed to render the Canvas and its elements
+  canvasData?: {
+    canvas?: CanvasProps;
+    elements?: CanvasElement;
   };
 }
 
@@ -51,7 +52,9 @@ export function ResultView({ canvasData }: ResultViewProps) {
   return (
     <>
       {/* You should not render a skia component that contains a Canvas inside a Canvas. */}
-      <Canvas {...canvasData.canvas}>{renderData(canvasData.elements)}</Canvas>
+      <Canvas>
+        {canvasData?.elements ? renderData(canvasData.elements) : null}
+      </Canvas>
 
       {/* You must use GestureDetector as a parent of the Canvas. It cannot be used inside the Canvas. */}
       <GestureDetector gesture={gesture}>

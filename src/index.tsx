@@ -1,18 +1,43 @@
-import { useState } from 'react';
+import { createRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated from 'react-native-reanimated';
+import { IGText, type IGTextRef } from './IGComponents/IGText';
 import { ResultView } from './ResultView';
 
 interface RNIGViewProps {
   // rnigURI: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function RNIGView(props: RNIGViewProps) {
+type ElementType = {
+  id: string;
+  type: 'text' | 'image';
+  ref: React.RefObject<IGTextRef | null>;
+};
+
+export function RNIGView(_props: RNIGViewProps) {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [elements, setElements] = useState<ElementType[]>([]);
+
+  // Add IGText to canvas
+  const handleAddText = () => {
+    const id = Math.random().toString(36).slice(2);
+    const ref = createRef<IGTextRef>();
+    setElements((prev) => [...prev, { id, type: 'text', ref }]);
+  };
+
+  // Gather canvas data for preview mode
+  // const getCanvasData = () => {
+  //   const canvasElementData = elements.map((el) =>
+  //     el.ref.current?.getCanvasElementData()
+  //   );
+  //   return {
+  //     canvas: {},
+  //     elements: canvasElementData,
+  //   };
+  // };
 
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       {/* TODO: refactor temp style */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setIsPreviewMode(!isPreviewMode)}>
@@ -20,12 +45,31 @@ export function RNIGView(props: RNIGViewProps) {
         </TouchableOpacity>
       </View>
       {isPreviewMode ? (
-        <ResultView canvasData={{ canvas: {}, elements: [] }} />
+        <ResultView />
       ) : (
-        <Animated.View style={{ backgroundColor: 'red' }}>
-          {/* TODO: Reanimred 기반으로 제스처 및 스타일 수정이 가능한 컴포넌트 만들어보자. */}
+        // Realtime Canvas
+        <Animated.View style={{ flex: 1 }}>
+          {/* Render IGText components */}
+          {elements.map((el) =>
+            el.type === 'text' ? <IGText key={el.id} ref={el.ref} /> : null
+          )}
+
+          {/* Edit Bar */}
+          <EditBar onAddText={handleAddText} />
         </Animated.View>
       )}
+    </View>
+  );
+}
+
+// Edit Bar Component
+function EditBar({ onAddText }: { onAddText: () => void }) {
+  return (
+    <View style={styles.editBar}>
+      <TouchableOpacity style={styles.editBarButton} onPress={onAddText}>
+        <Text style={styles.editBarButtonText}>Text</Text>
+      </TouchableOpacity>
+      {/* Add more buttons for images, shapes, etc. */}
     </View>
   );
 }
@@ -37,5 +81,29 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  editBar: {
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    height: 50,
+    width: '100%',
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderColor: '#ddd',
+    paddingHorizontal: 10,
+  },
+  editBarButton: {
+    marginRight: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    backgroundColor: '#eee',
+    borderRadius: 8,
+  },
+  editBarButtonText: {
+    fontWeight: 'bold',
+    color: '#333',
   },
 });
