@@ -33,6 +33,7 @@ export const IGText = forwardRef<IGTextRef, IGTextProps>(
   ({ initialText = '', initialX = 100, initialY = 100 }, ref) => {
     const [text, setText] = useState(initialText);
     const [editing, setEditing] = useState(false);
+    const [fontSize, _setFontSize] = useState(16);
 
     // Position state
     const x = useSharedValue(initialX);
@@ -49,7 +50,6 @@ export const IGText = forwardRef<IGTextRef, IGTextProps>(
           x: x.value,
           y: y.value,
           // TODO: Skia Text의 모든 props를 지원하도록 확장
-          font: null,
         },
       }),
     }));
@@ -112,12 +112,7 @@ export const IGText = forwardRef<IGTextRef, IGTextProps>(
           ) : (
             <TouchableWithoutFeedback onPress={() => setEditing(false)}>
               <View>
-                <Animated.Text
-                  style={[
-                    styles.text,
-                    // { color, fontSize, fontStyle, fontWeight },
-                  ]}
-                >
+                <Animated.Text style={{ fontSize, fontFamily: 'NotoSansKR' }}>
                   {text || 'Tap and hold to edit'}
                 </Animated.Text>
               </View>
@@ -132,9 +127,6 @@ export const IGText = forwardRef<IGTextRef, IGTextProps>(
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-  },
-  text: {
-    // Default text style
   },
   textInput: {
     minWidth: 80,

@@ -26,15 +26,16 @@ export function RNIGView(_props: RNIGViewProps) {
   };
 
   // Gather canvas data for preview mode
-  // const getCanvasData = () => {
-  //   const canvasElementData = elements.map((el) =>
-  //     el.ref.current?.getCanvasElementData()
-  //   );
-  //   return {
-  //     canvas: {},
-  //     elements: canvasElementData,
-  //   };
-  // };
+  const getCanvasData = () => {
+    const canvasElementData = elements
+      .map((el) => el.ref.current?.getCanvasElementData())
+      .filter((el) => el !== undefined);
+
+    return {
+      canvas: undefined,
+      elements: canvasElementData,
+    };
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -44,20 +45,24 @@ export function RNIGView(_props: RNIGViewProps) {
           <Text>{`Toggle ${isPreviewMode ? 'Edit' : 'Preview'} Mode`}</Text>
         </TouchableOpacity>
       </View>
-      {isPreviewMode ? (
-        <ResultView />
-      ) : (
-        // Realtime Canvas
+      <View style={{ flex: 1, backgroundColor: 'red' }}>
         <Animated.View style={{ flex: 1 }}>
           {/* Render IGText components */}
           {elements.map((el) =>
             el.type === 'text' ? <IGText key={el.id} ref={el.ref} /> : null
           )}
-
-          {/* Edit Bar */}
-          <EditBar onAddText={handleAddText} />
         </Animated.View>
-      )}
+
+        {isPreviewMode && (
+          <ResultView
+            canvasData={getCanvasData()}
+            fonts={{ NotoSansKR: require('../example/assets/NotoSansKR.ttf') }}
+          />
+        )}
+      </View>
+
+      {/* Edit Bar */}
+      <EditBar onAddText={handleAddText} />
     </View>
   );
 }
